@@ -220,6 +220,7 @@
   .cta .btn{flex-direction:column;gap:2px}
 
   /* DEV: botão "Ir para o final" (REMOVER antes de publicar) */
+  #devJump{position:fixed;right:12px;bottom:calc(58px + env(safe-area-inset-bottom));z-index:99;border:0;background:#444;color:#fff;font:800 12px 'Nunito';padding:10px 14px;border-radius:99px;opacity:.85;cursor:pointer}
   #devSkip{position:fixed;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:99;border:0;background:#222;color:#fff;font:800 12px 'Nunito';padding:10px 14px;border-radius:99px;opacity:.85;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.3)}
   footer{text-align:center;font-size:11.5px;color:#a99a8e;padding:18px 0 4px;line-height:1.5}
 
@@ -273,9 +274,10 @@ const IMG = "https://ceia-econ-mica-de-natal.vercel.app/img/";
 const CHECKOUT_ESSENCIAL = "https://pay.wiapy.com/X79lQo-CNcrL";
 const CHECKOUT_COMPLETO  = "https://pay.wiapy.com/6aebb363605b6cd0b4100cb9";
 /* VSL: link direto do arquivo de vídeo (.mp4 ou .m3u8). Deixe "" para o modo simulação. */
-const VSL_URL = "";
-const VSL_REVEAL = 0.80;           // botões aparecem quando a barra chega em 80%
-const VSL_SIM_SECONDS = 30;        // duração do vídeo simulado (só enquanto VSL_URL estiver vazio)
+const VSL_URL = "video/vsl.mp4";
+const VSL_POSTER = "video/vsl-poster.webp";
+const VSL_REVEAL_SEC = 90;         // botões de compra aparecem em 1min30s (quando o vídeo começa a falar do produto)
+const VSL_SIM_SECONDS = 30;        // duração do vídeo simulado (só usado se VSL_URL estiver vazio)
 const PROMO_FIM = new Date("2026-12-01T23:59:59-03:00");
 
 /* ============ PERGUNTAS ============
@@ -521,7 +523,7 @@ function renderResult(){
     <p class="vsl-title">Assista ao vídeo abaixo para ver como montar a sua ceia 👇</p>
     <div class="vsl" id="vsl"></div>
     <div class="vsl-bar"><i id="vslBar"></i></div>
-    <!-- Botões de compra: só aparecem quando a barra chega em VSL_REVEAL (80%) -->
+    <!-- Botões de compra: só aparecem quando o vídeo chega em VSL_REVEAL_SEC (1min30s) -->
     <div class="cta" id="cta">
       <a class="btn pulse" href="${withUTM(CHECKOUT_COMPLETO)}" data-snd data-plan="Completo" data-value="47.90">Quero o Plano Completo<small>R$ 47,90 · receitas + todos os bônus</small></a>
       <a class="btn red" href="${withUTM(CHECKOUT_ESSENCIAL)}" data-snd data-plan="Essencial" data-value="19.90">Quero o Plano Essencial<small>R$ 19,90 · guia com 37 receitas</small></a>
@@ -560,18 +562,18 @@ function initVSL(){
   let revealed=false;
   try{ revealed=localStorage.getItem("vsl_cta")==="1"; }catch(e){}
   const reveal=()=>{ if(cta.classList.contains("show")) return; cta.classList.add("show");
-    try{localStorage.setItem("vsl_cta","1")}catch(e){} track("trackCustom","VSL80"); };
+    try{localStorage.setItem("vsl_cta","1")}catch(e){} track("trackCustom","VSLOferta"); };
   if(revealed) reveal();
-  const setBar=p=>{ bar.style.width=(p*100).toFixed(2)+"%"; if(p>=VSL_REVEAL) reveal(); };
+  const setBar=(p,sec)=>{ bar.style.width=(p*100).toFixed(2)+"%"; if(sec>=VSL_REVEAL_SEC) reveal(); };
   const overlay=document.createElement("div"); overlay.className="vsl-overlay";
 
   if(!VSL_URL){ // ---- modo simulação ----
-    box.innerHTML=`<div class="vsl-ph"><span>Espaço do vídeo da VSL (vertical)</span><div class="vsl-time" id="simT">0:00</div><small>Simulação de ${VSL_SIM_SECONDS}s · os botões aparecem em ${VSL_REVEAL*100}%</small></div>`;
+    box.innerHTML=`<div class="vsl-ph"><span>Espaço do vídeo da VSL (vertical)</span><div class="vsl-time" id="simT">0:00</div><small>Simulação de ${VSL_SIM_SECONDS}s · os botões aparecem em 80%</small></div>`;
     overlay.innerHTML=`<div class="play">▶</div>Toque para assistir`; box.appendChild(overlay);
     let t=0,run=false,last=0;
     const loop=now=>{ if(!run) return; t=Math.min(VSL_SIM_SECONDS,t+(now-last)/1000); last=now;
       document.getElementById("simT").textContent=Math.floor(t/60)+":"+String(Math.floor(t%60)).padStart(2,"0");
-      setBar(t/VSL_SIM_SECONDS); if(t<VSL_SIM_SECONDS) requestAnimationFrame(loop); };
+      setBar(t/VSL_SIM_SECONDS, t>=VSL_SIM_SECONDS*0.8?VSL_REVEAL_SEC:0); if(t<VSL_SIM_SECONDS) requestAnimationFrame(loop); };
     box.onclick=()=>{ sfx.click(); run=!run; overlay.classList.toggle("hide",run);
       overlay.innerHTML=`<div class="play">▶</div>Continuar assistindo`; if(run){ last=performance.now(); requestAnimationFrame(loop);} };
     return;
@@ -579,7 +581,7 @@ function initVSL(){
 
   // ---- vídeo real ----
   const v=document.createElement("video");
-  v.src=VSL_URL; v.muted=true; v.autoplay=true; v.playsInline=true; v.preload="auto";
+  v.src=VSL_URL; if(VSL_POSTER) v.poster=VSL_POSTER; v.muted=true; v.autoplay=true; v.playsInline=true; v.preload="auto";
   v.setAttribute("playsinline",""); v.setAttribute("webkit-playsinline","");
   v.setAttribute("controlsList","nodownload noplaybackrate noremoteplayback"); v.disablePictureInPicture=true;
   box.oncontextmenu=e=>e.preventDefault();
@@ -587,7 +589,7 @@ function initVSL(){
   overlay.innerHTML=`<div class="sound"><span>🔇</span>Seu vídeo já começou<br>Toque para ouvir</div>`;
   box.appendChild(overlay);
   let unmuted=false;
-  v.addEventListener("timeupdate",()=>{ if(unmuted && v.duration) setBar(v.currentTime/v.duration); });
+  v.addEventListener("timeupdate",()=>{ if(unmuted && v.duration) setBar(v.currentTime/v.duration, v.currentTime); });
   v.addEventListener("ratechange",()=>{ if(v.playbackRate!==1) v.playbackRate=1; });
   v.play().catch(()=>{ overlay.innerHTML=`<div class="play">▶</div>Toque para assistir`; });
   box.onclick=()=>{
@@ -606,6 +608,13 @@ function initVSL(){
     state.i=Q.length; document.getElementById("progress").classList.remove("show"); back.classList.remove("show");
     try{localStorage.removeItem("vsl_cta")}catch(e){}
     renderResult(); window.scrollTo(0,0);
+    // DEV: segundo botão para pular o vídeo até 1:25 e ver os botões de compra aparecerem
+    if(!document.getElementById("devJump")){
+      const j=document.createElement("button"); j.id="devJump"; j.textContent="⏩ Vídeo em 1:25";
+      j.onclick=()=>{ const v=document.querySelector("#vsl video"); if(!v) return;
+        document.getElementById("vsl").click(); setTimeout(()=>{ v.currentTime=VSL_REVEAL_SEC-5; v.play(); },50); };
+      document.body.appendChild(j);
+    }
   };
   document.body.appendChild(b);
 })();
