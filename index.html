@@ -193,6 +193,16 @@
   .sheet-body ol{background:#fff;border:1px solid var(--line);border-radius:14px;padding:6px 14px 6px 36px}
   .sheet-body li{font-size:14.5px;padding:7px 0;border-bottom:1px dashed #f0e3d1}
   .sheet-body li:last-child{border-bottom:0}
+
+  /* VSL */
+  .vsl-title{text-align:center;font-weight:800;font-size:16px;color:var(--red-dk);margin:4px 0 10px}
+  .vsl{position:relative;width:100%;aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:#1b0d09;box-shadow:0 12px 28px rgba(60,20,10,.25);margin-bottom:18px}
+  .vsl iframe,.vsl video{position:absolute;inset:0;width:100%;height:100%;border:0}
+  .vsl-ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:#f3dcc0;font-weight:800;font-size:14px;border:2px dashed rgba(243,220,192,.35);border-radius:16px}
+  .vsl-ph .play{width:64px;height:64px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;font-size:24px;padding-left:4px;box-shadow:0 6px 18px rgba(163,22,31,.5)}
+
+  /* DEV: botão "Ir para o final" (REMOVER antes de publicar) */
+  #devSkip{position:fixed;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:99;border:0;background:#222;color:#fff;font:800 12px 'Nunito';padding:10px 14px;border-radius:99px;opacity:.85;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.3)}
   footer{text-align:center;font-size:11.5px;color:#a99a8e;padding:18px 0 4px;line-height:1.5}
 
   /* neve */
@@ -485,57 +495,16 @@ function renderResult(){
       <div><small>Sobremesa</small><b>${doce}</b></div>
       <div><small>Objetivo</small><b>Economizar sem perder o sabor</b></div>
     </div>
-    <div class="plan">
-      <h3>O que vem no seu plano</h3>
-      <ul>
-        <li>37 receitas econômicas com passo a passo</li>
-        <li>Cardápios prontos por orçamento</li>
-        <li>Lista de compras e quantidades por pessoa</li>
-        <li>Substituições econômicas que mantêm o sabor</li>
-        <li>Cronograma de preparo para não ter correria no dia 24</li>
-      </ul>
+    <!-- ===== VSL =====
+         Cole aqui o código de incorporação do vídeo (iframe do YouTube/Vimeo/Panda/VTurb),
+         substituindo o <div class="vsl-ph">…</div>. -->
+    <p class="vsl-title">Assista ao vídeo abaixo para ver como montar a sua ceia 👇</p>
+    <div class="vsl" id="vsl">
+      <div class="vsl-ph"><div class="play">▶</div><span>Espaço do vídeo da VSL</span></div>
     </div>
-    <div class="mockrow">
-      ${["pagina-1.32b79ce1","pagina-2.ef8f390c","pagina-3.0813c4c0","pagina-4.a6476f87","pagina-5.7c819a75"].map(f=>`<img src="${IMG+f}.webp" alt="Página do guia" loading="lazy">`).join("")}
-    </div>
-    <div class="timer">⏰ Promoção termina em <b id="cd">--</b></div>
-
-    <div class="offer best" id="planos">
-      <div class="ribbon">⭐ MAIS ESCOLHIDO</div>
-      <h4>Plano Completo</h4>
-      <p class="desc">A ceia inteira resolvida: do prato principal à sobremesa</p>
-      <ul class="base"><li class="row"><span>E-book <b>Ceia Econômica de Natal</b> (37 receitas)</span><s>R$ 19,90</s></li></ul>
-      ${BONUS.map((b,k)=>`<div class="bonus">
-        <img src="${IMG+b.capa}" alt="${b.titulo}" loading="lazy">
-        <div><span class="btag">Bônus especial de Natal</span><h5>${b.titulo}</h5><p>${b.desc}</p><s>Valor: R$ ${b.valor}</s>
-        <button class="see" data-bonus="${k}">Ver o que tem dentro ›</button></div></div>`).join("")}
-      <ul class="extras">
-        <li class="row"><span>🎁 Calendário de Datas Doces</span><s>R$ 27,00</s></li>
-        <li class="row"><span>🎁 Bolo Retangular</span><s>R$ 67,00</s></li>
-        <li class="row"><span>🎁 30 Receitas de Doces para Festas</span><s>R$ 15,00</s></li>
-        <li class="row"><span>🎁 3 cardápios prontos, checklist de compras e guia de porções</span></li>
-      </ul>
-      <div class="price"><s>De R$ 211,70</s><span class="now">R$ 47,90</span><small>pagamento único</small></div>
-      <a class="btn pulse" href="${withUTM(CHECKOUT_COMPLETO)}" data-snd data-plan="Completo" data-value="47.90">Quero o Plano Completo →</a>
-    </div>
-
-    <div class="offer">
-      <h4>Plano Essencial</h4>
-      <p class="desc">Só o guia principal</p>
-      <ul class="base"><li>Guia Ceia Econômica de Natal (37 receitas)</li></ul>
-      <div class="price"><span class="now" style="font-size:34px">R$ 19,90</span><small>pagamento único</small></div>
-      <a class="btn red" href="${withUTM(CHECKOUT_ESSENCIAL)}" data-snd data-plan="Essencial" data-value="19.90">Quero o Plano Essencial</a>
-    </div>
-
-    <div class="guarantee">
-      <img src="${IMG}selo-garantia-15-dias.a250f264.webp" alt="Garantia de 15 dias">
-      <p><b>Garantia de 15 dias</b>Se não gostar, devolvemos 100% do seu dinheiro, sem perguntas.</p>
-    </div>
-    <p class="fine">Acesso imediato pelo celular, computador ou para imprimir.</p>
   </section>`;
   main.querySelectorAll("[data-snd]").forEach(a=>a.addEventListener("click",()=>{ sfx.click(); track("track","InitiateCheckout",{content_name:"Plano "+a.dataset.plan,value:+a.dataset.value,currency:"BRL"}); }));
   main.querySelectorAll("[data-bonus]").forEach(b=>b.onclick=()=>{sfx.click();openModal(BONUS[+b.dataset.bonus]);});
-  startCountdown();
 }
 
 function startCountdown(){
@@ -555,6 +524,19 @@ function startCountdown(){
 /* pré-carrega imagens do resultado */
 ["mockup-400.ae4a386f.png","ce-pernil.3db0c7f7.webp","ce-frango-assado.6ae5452e.webp"].forEach(f=>{const im=new Image();im.src=IMG+f;});
 ["bacalhau","chester","pave","rabanada","torta","panetone"].forEach(f=>{const im=new Image();im.src="img/"+f+".webp";});
+
+
+/* ===== DEV: botão "Ir para o final" — REMOVER ANTES DE PUBLICAR ===== */
+(function(){
+  const b=document.createElement("button"); b.id="devSkip"; b.textContent="⏭ Ir para o final";
+  b.onclick=()=>{
+    Object.assign(state.answers,{idade:"30 a 44 anos",pessoas:"5 a 8 pessoas",prato:"Pernil assado",sobremesa:"Pavê"});
+    state.i=Q.length; document.getElementById("progress").classList.remove("show"); back.classList.remove("show");
+    renderResult(); window.scrollTo(0,0);
+  };
+  document.body.appendChild(b);
+})();
+/* ===== FIM DEV ===== */
 
 go(-1,false);
 </script>
