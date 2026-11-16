@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#7a1018">
+<title>Descubra sua Ceia de Natal Econômica | Quiz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --red:#a3161f; --red-dk:#7a1018; --green:#1f6b45; --green-dk:#134a30;
+    --gold:#e0a63b; --cream:#fdf7ee; --paper:#ffffff; --ink:#2a1a14; --muted:#7b6a60;
+    --line:#efe2d0; --radius:16px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{
+    font-family:'Nunito',system-ui,sans-serif;color:var(--ink);
+    background:var(--cream);
+    background-image:radial-gradient(circle at 10% 0%,#fbe9d3 0,transparent 40%),radial-gradient(circle at 100% 100%,#f6e0c4 0,transparent 45%);
+    min-height:100dvh;
+  }
+  .app{max-width:480px;margin:0 auto;min-height:100dvh;display:flex;flex-direction:column;padding:0 18px calc(24px + env(safe-area-inset-bottom))}
+
+  /* topo */
+  header{position:sticky;top:0;z-index:5;padding:14px 0 10px;background:linear-gradient(var(--cream) 75%,transparent)}
+  .topbar{display:flex;align-items:center;gap:10px}
+  .back{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--line);background:#fff;display:grid;place-items:center;cursor:pointer;flex:none;visibility:hidden}
+  .back.show{visibility:visible}
+  .back svg{width:18px;height:18px}
+  .brand{flex:1;text-align:center;font-family:'Fraunces',serif;font-weight:800;font-size:17px;color:var(--red-dk);letter-spacing:.2px}
+  .brand span{color:var(--green)}
+  .spacer{width:36px;flex:none}
+  .progress{margin-top:12px;display:none}
+  .progress.show{display:block}
+  .phase-label{display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px}
+  .bar{height:8px;background:#f0e3d1;border-radius:99px;overflow:hidden}
+  .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--green),#2f9a63);border-radius:99px;transition:width .45s ease}
+
+  /* telas */
+  main{flex:1;position:relative}
+  .screen{animation:in .4s ease both}
+  @keyframes in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  h1,h2{font-family:'Fraunces',serif;line-height:1.15;color:var(--red-dk)}
+  h1{font-size:30px;font-weight:800}
+  h2{font-size:24px;font-weight:800;margin:8px 0 6px}
+  .sub{color:var(--muted);font-size:15.5px;line-height:1.5;margin-bottom:18px}
+  .tag{display:inline-block;background:#fff3dc;color:#9a6512;border:1px solid #f1d9a6;font-size:12px;font-weight:800;padding:5px 10px;border-radius:99px;letter-spacing:.3px;text-transform:uppercase}
+
+  /* capa */
+  .hero{text-align:center;padding-top:6px}
+  .hero img.mock{width:78%;max-width:280px;margin:8px auto 4px;display:block;filter:drop-shadow(0 18px 24px rgba(122,16,24,.25))}
+  .hero h1{margin:12px 0 10px}
+  .hero h1 em{font-style:normal;color:var(--green)}
+  .chips{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:6px 0 20px}
+  .chip{font-size:13px;font-weight:700;background:#fff;border:1px solid var(--line);padding:6px 11px;border-radius:99px}
+
+  /* opções */
+  .opts{display:flex;flex-direction:column;gap:11px}
+  .opt{
+    display:flex;align-items:center;gap:12px;width:100%;text-align:left;
+    background:var(--paper);border:2px solid var(--line);border-radius:var(--radius);
+    padding:15px 16px;font:700 16px 'Nunito',sans-serif;color:var(--ink);cursor:pointer;
+    box-shadow:0 2px 0 #ead9c2;transition:transform .08s,border-color .15s,background .15s;
+  }
+  .opt .emo{font-size:24px;width:32px;text-align:center;flex:none}
+  .opt .txt{flex:1}
+  .opt .txt small{display:block;font-weight:600;color:var(--muted);font-size:13px;margin-top:2px}
+  .opt:active{transform:scale(.98)}
+  .opt.sel{border-color:var(--green);background:#eef8f1}
+  .opt.sel::after{content:"✓";margin-left:auto;width:24px;height:24px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center;font-size:14px;flex:none}
+
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+  .card{background:#fff;border:2px solid var(--line);border-radius:var(--radius);overflow:hidden;cursor:pointer;padding:0;font:800 15px 'Nunito';color:var(--ink);box-shadow:0 2px 0 #ead9c2;transition:transform .08s,border-color .15s}
+  .card img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;background:#f3e6d4}
+  .card .ph{width:100%;aspect-ratio:1/1;display:grid;place-items:center;font-size:56px;background:linear-gradient(135deg,#fbecd6,#f5dcb9)}
+  .card span{display:block;padding:11px 8px}
+  .card:active{transform:scale(.97)}
+  .card:nth-child(odd):last-child{grid-column:1/-1;display:flex;align-items:center}
+  .card:nth-child(odd):last-child .ph{width:72px;aspect-ratio:1/1;font-size:34px;flex:none}
+  .card:nth-child(odd):last-child span{text-align:left;padding:0 16px}
+  .card.sel{border-color:var(--green);background:#eef8f1}
+
+  /* botões */
+  .btn{
+    display:flex;align-items:center;justify-content:center;gap:8px;width:100%;border:0;cursor:pointer;
+    background:linear-gradient(180deg,#2f9a63,var(--green));color:#fff;font:800 17px 'Nunito';
+    padding:18px 20px;border-radius:14px;box-shadow:0 5px 0 var(--green-dk),0 10px 22px rgba(31,107,69,.28);
+    text-decoration:none;text-align:center;transition:transform .08s,box-shadow .08s;
+  }
+  .btn:active{transform:translateY(4px);box-shadow:0 1px 0 var(--green-dk)}
+  .btn.red{background:linear-gradient(180deg,#c42630,var(--red));box-shadow:0 5px 0 var(--red-dk),0 10px 22px rgba(163,22,31,.3)}
+  .btn.red:active{box-shadow:0 1px 0 var(--red-dk)}
+  .btn.pulse{animation:pulse 1.8s infinite}
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
+  .fine{text-align:center;font-size:12.5px;color:var(--muted);margin-top:12px}
+
+  /* bloco de explicação */
+  .info{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px;margin:6px 0 18px;box-shadow:0 8px 24px rgba(90,40,10,.06)}
+  .info p{font-size:15.5px;line-height:1.55;margin-bottom:10px}
+  .info p:last-child{margin-bottom:0}
+  .info b{color:var(--red-dk)}
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0 4px}
+  .compare div{border-radius:12px;padding:12px;font-size:13.5px;line-height:1.45;font-weight:600}
+  .compare .bad{background:#fdecec;color:#7a1018}
+  .compare .good{background:#e9f6ee;color:#134a30}
+  .compare strong{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
+  .stat{display:flex;align-items:center;gap:14px;background:#fff7e8;border:1px dashed #e9c98a;border-radius:14px;padding:14px;margin-bottom:16px}
+  .stat .big{font-family:'Fraunces',serif;font-size:34px;font-weight:800;color:var(--red)}
+  .stat p{font-size:14px;line-height:1.45}
+
+  /* loading */
+  .loading{text-align:center;padding-top:30px}
+  .ring{width:150px;height:150px;margin:0 auto 22px;position:relative}
+  .ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+  .ring circle{fill:none;stroke-width:10}
+  .ring .bg{stroke:#f0e3d1}
+  .ring .fg{stroke:var(--green);stroke-linecap:round;stroke-dasharray:408;stroke-dashoffset:408;transition:stroke-dashoffset .2s linear}
+  .ring .pct{position:absolute;inset:0;display:grid;place-items:center;font-family:'Fraunces',serif;font-size:36px;font-weight:800;color:var(--red-dk)}
+  .steps{list-style:none;text-align:left;max-width:330px;margin:22px auto 0;display:flex;flex-direction:column;gap:12px}
+  .steps li{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:700;color:#b9a898;transition:color .3s}
+  .steps li .dot{width:24px;height:24px;border-radius:50%;border:2px solid #e3d3bf;display:grid;place-items:center;font-size:13px;flex:none;transition:all .3s}
+  .steps li.on{color:var(--ink)}
+  .steps li.on .dot{border-color:var(--gold);border-top-color:transparent;animation:spin .8s linear infinite}
+  .steps li.done{color:var(--green-dk)}
+  .steps li.done .dot{background:var(--green);border-color:var(--green);color:#fff;animation:none}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* resultado */
+  .result-head{text-align:center;background:linear-gradient(160deg,var(--red),var(--red-dk));color:#fff;border-radius:20px;padding:22px 18px;margin-bottom:18px;position:relative;overflow:hidden}
+  .result-head::before{content:"❄ ✦ ❄ ✦ ❄ ✦ ❄";position:absolute;top:6px;left:0;right:0;font-size:11px;opacity:.35;letter-spacing:6px}
+  .result-head h2{color:#fff;font-size:25px;margin-top:8px}
+  .result-head .tag{background:rgba(255,255,255,.15);color:#ffe2a8;border-color:rgba(255,255,255,.25)}
+  .result-head p{opacity:.92;font-size:15px;line-height:1.5;margin-top:8px}
+  .profile{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+  .profile div{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px}
+  .profile small{display:block;font-size:11.5px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+  .profile b{font-size:15px;color:var(--ink)}
+  .plan{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:18px}
+  .plan h3{font-family:'Fraunces',serif;color:var(--red-dk);font-size:19px;margin-bottom:12px}
+  .plan ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+  .plan li{display:flex;gap:10px;font-size:15px;line-height:1.4}
+  .plan li::before{content:"✓";flex:none;width:22px;height:22px;border-radius:50%;background:#e9f6ee;color:var(--green);display:grid;place-items:center;font-weight:900;font-size:13px}
+  .mockrow{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -18px 18px;padding:4px 18px 8px}
+  .mockrow img{height:190px;border-radius:10px;scroll-snap-align:start;box-shadow:0 6px 16px rgba(0,0,0,.12);flex:none}
+  .offer{border:2.5px solid var(--green);border-radius:20px;background:#fff;padding:20px 18px;margin-bottom:14px;position:relative}
+  .offer.best{border-color:var(--gold);box-shadow:0 12px 30px rgba(224,166,59,.25)}
+  .ribbon{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--gold);color:#4a2c00;font-size:12px;font-weight:900;padding:5px 14px;border-radius:99px;white-space:nowrap;letter-spacing:.3px}
+  .offer h4{font-family:'Fraunces',serif;font-size:20px;color:var(--red-dk);text-align:center;margin-top:4px}
+  .offer .desc{text-align:center;font-size:14px;color:var(--muted);margin:4px 0 10px}
+  .offer ul{list-style:none;margin:10px 0 14px;display:flex;flex-direction:column;gap:7px}
+  .offer li{font-size:14.5px;display:flex;gap:8px;line-height:1.35}
+  .offer li::before{content:"🎁";flex:none}
+  .offer .base li::before{content:"✓";color:var(--green);font-weight:900}
+  .price{text-align:center;margin:6px 0 14px}
+  .price s{color:#a99a8e;font-size:15px}
+  .price .now{display:block;font-family:'Fraunces',serif;font-size:42px;font-weight:800;color:var(--green);line-height:1.1}
+  .price small{font-size:13px;color:var(--muted);font-weight:700}
+  .timer{display:flex;align-items:center;justify-content:center;gap:8px;background:#fff3dc;border:1px solid #f1d9a6;color:#7a4a00;border-radius:12px;padding:10px;font-weight:800;font-size:14px;margin-bottom:16px}
+  .timer b{font-variant-numeric:tabular-nums}
+  .guarantee{display:flex;gap:14px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px;margin:18px 0}
+  .guarantee img{width:84px;flex:none}
+  .guarantee p{font-size:14px;line-height:1.45}
+  .guarantee b{display:block;font-family:'Fraunces',serif;color:var(--red-dk);font-size:17px;margin-bottom:3px}
+
+  /* bônus + pop-up */
+  .row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+  .row s{color:#a99a8e;font-size:13.5px;white-space:nowrap;flex:none}
+  .offer li.row::before{display:none}
+  .offer .base li.row span::before{content:"✓ ";color:var(--green);font-weight:900}
+  .extras{margin-top:4px!important}
+  .bonus{display:flex;gap:12px;background:#fffaf1;border:2px solid #f1d58f;border-radius:16px;padding:12px;margin:10px 0}
+  .bonus img{width:78px;height:110px;object-fit:cover;border-radius:6px;box-shadow:0 4px 10px rgba(0,0,0,.18);flex:none;background:#f3e6d4}
+  .btag{display:inline-block;background:var(--red);color:#fff;font-size:10.5px;font-weight:900;text-transform:uppercase;letter-spacing:.3px;padding:3px 9px;border-radius:99px}
+  .bonus h5{font-family:'Fraunces',serif;color:var(--green-dk);font-size:16.5px;line-height:1.2;margin:6px 0 3px}
+  .bonus p{font-size:13px;color:var(--muted);line-height:1.35}
+  .bonus s{display:block;font-size:13px;color:#a99a8e;margin:4px 0 8px}
+  .see{border:0;background:var(--green);color:#fff;font:800 13.5px 'Nunito';padding:9px 14px;border-radius:99px;cursor:pointer}
+  .see:active{transform:scale(.96)}
+  .modal{position:fixed;inset:0;z-index:50;background:rgba(30,12,8,.55);display:flex;align-items:flex-end;justify-content:center;animation:fade .2s}
+  @keyframes fade{from{opacity:0}}
+  .sheet{background:var(--cream);width:100%;max-width:480px;max-height:86dvh;border-radius:22px 22px 0 0;display:flex;flex-direction:column;animation:up .3s ease}
+  @keyframes up{from{transform:translateY(40px);opacity:0}}
+  .sheet-head{display:flex;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line)}
+  .sheet-head img{width:44px;height:62px;object-fit:cover;border-radius:4px;flex:none}
+  .sheet-head h3{flex:1;font-family:'Fraunces',serif;color:var(--red-dk);font-size:18px;line-height:1.2}
+  .sheet-head h3 small{display:block;font-family:'Nunito';font-size:12.5px;color:var(--muted);font-weight:700;margin-top:2px}
+  .close{width:36px;height:36px;border-radius:50%;border:0;background:#f0e3d1;font-size:18px;cursor:pointer;flex:none}
+  .sheet-body{overflow-y:auto;padding:6px 18px calc(18px + env(safe-area-inset-bottom))}
+  .sheet-body h4{font-family:'Fraunces',serif;color:var(--green-dk);font-size:16px;margin:16px 0 8px}
+  .sheet-body ol{background:#fff;border:1px solid var(--line);border-radius:14px;padding:6px 14px 6px 36px}
+  .sheet-body li{font-size:14.5px;padding:7px 0;border-bottom:1px dashed #f0e3d1}
+  .sheet-body li:last-child{border-bottom:0}
+  footer{text-align:center;font-size:11.5px;color:#a99a8e;padding:18px 0 4px;line-height:1.5}
+
+  /* neve */
+  .snow{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+  .snow i{position:absolute;top:-10px;color:#e8cfae;animation:fall linear infinite;font-style:normal}
+  @keyframes fall{to{transform:translateY(105vh) rotate(260deg)}}
+  .app{position:relative;z-index:1}
+</style>
+<!-- Microsoft Clarity -->
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "ze8uh4d565");
+</script>
+<!-- Meta Pixel -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','1122892143970982');
+fbq('track','PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1122892143970982&ev=PageView&noscript=1"/></noscript>
+</head>
+<body>
+<div class="snow" id="snow"></div>
+<div class="app">
+  <header>
+    <div class="topbar">
+      <button class="back" id="back" aria-label="Voltar"><svg viewBox="0 0 24 24" fill="none" stroke="#7a1018" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <div class="brand">🎄 Ceia <span>Econômica</span> de Natal</div>
+      <div class="spacer"></div>
+    </div>
+    <div class="progress" id="progress">
+      <div class="phase-label"><span id="phaseName">Etapa 1 de 3</span><span id="stepCount">1/18</span></div>
+      <div class="bar"><i id="barFill"></i></div>
+    </div>
+  </header>
+  <main id="main"></main>
+  <footer>Este site não é afiliado ao Facebook ou à Meta.<br>Preços de ingredientes são apenas referência.</footer>
+</div>
+
+<script>
+/* ============ CONFIGURAÇÃO ============ */
+const IMG = "https://ceia-econ-mica-de-natal.vercel.app/img/";
+const CHECKOUT_ESSENCIAL = "https://pay.wiapy.com/X79lQo-CNcrL";
+const CHECKOUT_COMPLETO  = "https://pay.wiapy.com/6aebb363605b6cd0b4100cb9";
+const PROMO_FIM = new Date("2026-12-01T23:59:59-03:00");
+
+/* ============ PERGUNTAS ============
+   fase 1 = o que a pessoa quer (3)
+   fase 2 = admitir o problema (5)
+   fase 3 = mecanismo da solução + sucesso presumido + sequência de sims (10) */
+const Q = [
+  // ---------- FASE 1 ----------
+  {phase:1,id:"idade",q:"Qual a sua idade?",sub:"Assim adaptamos o plano à sua rotina.",opts:[
+    {e:"🌱",t:"18 a 29 anos"},{e:"🌿",t:"30 a 44 anos"},{e:"🌳",t:"45 a 59 anos"},{e:"🌲",t:"60 anos ou mais"}]},
+  {phase:1,id:"pessoas",q:"Quantas pessoas vão estar na sua ceia este ano?",sub:"Vamos calcular as quantidades certas para você.",opts:[
+    {e:"👫",t:"Até 4 pessoas"},{e:"👨‍👩‍👧",t:"5 a 8 pessoas"},{e:"👨‍👩‍👧‍👦",t:"9 a 15 pessoas"},{e:"🎉",t:"Mais de 15 pessoas"}]},
+  {phase:1,id:"quer",q:"Você quer fazer uma ceia farta e bonita neste Natal gastando pouco?",opts:[
+    {e:"😍",t:"Sim, quero muito!"},{e:"🙂",t:"Sim, se for possível"},{e:"🤔",t:"Talvez, quero entender como"}]},
+
+  // ---------- FASE 2 ----------
+  {phase:2,id:"orcamento",q:"Como está o seu orçamento para o Natal este ano?",opts:[
+    {e:"😰",t:"Bem apertado",d:"Preciso fazer o dinheiro render"},
+    {e:"😕",t:"Mais curto que o ano passado",d:"Tudo subiu de preço"},
+    {e:"😐",t:"Razoável, mas não quero gastar à toa"}]},
+  {phase:2,id:"ideias",q:"Você já ficou sem ideia do que preparar além do “arroz com frango” de sempre?",opts:[
+    {e:"🙋‍♀️",t:"Sim, todo ano é a mesma coisa"},{e:"😅",t:"Às vezes fico perdida"},{e:"🤷",t:"Raramente"}]},
+  {phase:2,id:"quantidade",q:"Já aconteceu de sobrar muita comida… ou faltar na hora de servir?",opts:[
+    {e:"🗑️",t:"Sim, sobra muito e acabo jogando fora"},{e:"😳",t:"Sim, já faltou e fiquei sem graça"},{e:"😬",t:"As duas coisas já aconteceram"},{e:"👌",t:"Nunca aconteceu"}]},
+  {phase:2,id:"tradicao",q:"Você sente pressão para manter os pratos tradicionais da ceia, mesmo com tudo tão caro?",opts:[
+    {e:"😩",t:"Sim, a família espera os clássicos"},{e:"💭",t:"Um pouco, queria agradar todo mundo"},{e:"😌",t:"Não, sou flexível"}]},
+  {phase:2,id:"disposta",q:"Se alguém te mostrasse o caminho, você estaria disposta a se organizar com antecedência para gastar menos?",opts:[
+    {e:"💪",t:"Sim, faço o que for preciso"},{e:"👍",t:"Sim, se for simples de seguir"}]},
+
+  // ---------- TRANSIÇÃO (tela informativa) ----------
+  {type:"info",phase:3,id:"mecanismo"},
+
+  // ---------- FASE 3 ----------
+  {phase:3,id:"sabia_plan",q:"Sabia que o segredo de uma ceia econômica não é comprar o ingrediente mais barato, e sim ter um PLANO?",sub:"Cardápio certo + lista de compras + quantidade por pessoa = zero desperdício.",opts:[
+    {e:"💡",t:"Não sabia, faz todo sentido!"},{e:"✅",t:"Já imaginava, mas nunca soube como fazer"}]},
+  {phase:3,id:"sabia_subst",q:"Sabia que dá para trocar ingredientes caros por versões econômicas sem ninguém perceber a diferença no sabor?",opts:[
+    {e:"😮",t:"Sério? Quero saber quais!"},{e:"👀",t:"Já ouvi falar, quero aprender"}]},
+  {phase:3,id:"prato",type:"grid",q:"Qual prato principal você gostaria de colocar na mesa?",sub:"Escolha o seu favorito.",opts:[
+    {img:"ce-pernil.3db0c7f7.webp",t:"Pernil assado"},
+    {img:"ce-frango-assado.6ae5452e.webp",t:"Frango assado"},
+    {img:"bacalhau.webp",local:1,t:"Bacalhau"},
+    {img:"chester.webp",local:1,t:"Chester / Peru"},
+    {e:"🍽️",t:"Outro"}]},
+  {phase:3,id:"sobremesa",type:"grid",q:"E qual sobremesa não pode faltar?",opts:[
+    {img:"pave.webp",local:1,t:"Pavê"},
+    {img:"rabanada.webp",local:1,t:"Rabanada"},
+    {img:"torta.webp",local:1,t:"Torta / Bolo"},
+    {img:"panetone.webp",local:1,t:"Panetone caseiro"}]},
+  {phase:3,id:"sentir",q:"Imagine sua família elogiando cada prato da ceia… Como você se sentiria?",opts:[
+    {e:"😊",t:"Orgulhosa de mim"},{e:"😌",t:"Aliviada, sem estresse"},{e:"🥰",t:"Feliz por ver todos reunidos"},{e:"✨",t:"Tudo isso junto!"}]},
+  {phase:3,id:"economia",q:"E o que você faria com o dinheiro que vai economizar na ceia?",opts:[
+    {e:"🎁",t:"Compraria mais presentes"},{e:"💳",t:"Pagaria contas de janeiro"},{e:"🏖️",t:"Guardaria para as férias"},{e:"🐷",t:"Colocaria na poupança"}]},
+  {phase:3,id:"entendeu",q:"Você entendeu que, com cardápio pronto e lista de compras, você economiza tempo E dinheiro?",opts:[
+    {e:"✅",t:"Sim, entendi!"},{e:"👍",t:"Sim, com certeza"}]},
+  {phase:3,id:"cronograma",q:"Acha que com um cronograma de preparo você chega na noite de Natal tranquila, sem correria na cozinha?",opts:[
+    {e:"✅",t:"Sim, isso mudaria tudo!"},{e:"🙌",t:"Sim, é exatamente o que eu preciso"}]},
+  {phase:3,id:"antecedencia",q:"Você concorda que comprar antes da alta de preços de dezembro é a decisão mais inteligente?",opts:[
+    {e:"✅",t:"Sim, concordo totalmente"},{e:"👍",t:"Sim, faz sentido"}]},
+  {phase:3,id:"quer_plano",q:"Você quer receber seu plano de Ceia Econômica personalizado?",sub:"Com receitas, lista de compras e quantidades para a sua família.",opts:[
+    {e:"🎄",t:"Sim, quero meu plano agora!"}]}
+];
+
+const TOTAL = Q.filter(x=>x.type!=="info").length;
+const PHASES = {1:"Etapa 1 de 3 · Seu perfil",2:"Etapa 2 de 3 · Seus desafios",3:"Etapa 3 de 3 · Sua ceia ideal"};
+
+
+/* ============ BÔNUS (conteúdo dos pop-ups) ============ */
+const BONUS=[
+ {titulo:"Ceia: 27 Receitas para o Prato Principal",capa:"r27-capa.71c5ec36.webp",valor:"27,90",desc:"Carnes, assados, aves, peixes e bacalhau para o centro da mesa.",sec:[
+  ["Carnes bovinas",["Rocambole de carne moída","Carne ao vinho na panela de pressão","Maminha assada no sal grosso","Picanha na manteiga","Filé mignon ao forno prático","Costela assada no forno"]],
+  ["Suínos e assados",["Lombo recheado (Porchetta)","Tender ao molho de laranja","Panceta pururuca","Pernil assado","Tender com mel e laranja","Tender bolinha","Pernil ao molho de maçã","Rocambole de carne moída suína"]],
+  ["Aves de Natal",["Peru de Natal","Lasanha de frango com queijo","Ave natalina com manteiga de ervas","Frango recheado","Chester assado","Peru de Natal temperado"]],
+  ["Peixes e bacalhau",["Tilápia assada com creme de cebola","Bacalhau com batatas","Suflê de bacalhau","Filé de peixe no forno fácil"]],
+  ["Especialidades",["Salpicão de frango","Salpicão de Natal especial","Risoto de tomate seco e rúcula"]]]},
+ {titulo:"Ceia: 34 Sobremesas de Natal",capa:"s34-capa.c392d723.webp",valor:"27,90",desc:"Pavês, rabanadas, pudins, tortas e panetones para fechar a ceia.",sec:[
+  ["Sobremesas de travessa e clássicos gelados",["Sobremesa moça gelada","Pavê tradicional","Marido gelado","Bombom de morango na travessa com leite Ninho","Gelatina colorida simples","Flan de morango","Manjar de coco","Sobremesa de Natal na travessa","Sobremesa Sensação fácil","Pavê de pêssego com bolacha maisena","Escondidinho de uva"]],
+  ["Rabanadas especiais de Natal",["Rabanada de Natal","Rabanada na airfryer","Rabanada tradicional","Rabanadas recheadas com caramelo salgado","Rabanada recheada na air fryer","Rabanada assada","Rabanada de travessa"]],
+  ["Sobremesas cremosas e tortas",["Pudim de leite condensado","Banoffee (torta de banana)","Mousse de maracujá fácil e cremosa","Mousse de chocolate fácil"]],
+  ["Bolos, roscas e biscoitos natalinos",["Bolo de reis","Rosca natalina","Biscoito de gengibre de Natal","Bolotone tradicional","Bolo natalino","Bolacha de Natal"]],
+  ["Panetones e chocotones especiais",["Panetone de pistache","Pavê de panetone simples","Chocotone bites","Pavê de chocotone simples","Bolo de chocotone","Panetone recheado"]]]},
+ {titulo:"Ceia: 24 Acompanhamentos",capa:"a24-capa.2fc5a242.webp",valor:"27,00",desc:"Arroz, farofas, saladas, salpicões e purês para completar a mesa.",sec:[
+  ["Clássicos da ceia",["Macarronese","Batata gratinada","Salada de repolho com manga","Farofa de Natal","Salada tropical natalina","Arroz de forno com frango fácil","Coleslaw","Patê de abacaxi com bacon","Lagarto ao vinagrete","Salada de bacalhau simples","Arroz com lentilha e cebolas douradas","Salpicão de frango"]],
+  ["Mais opções para a mesa",["Arroz de Natal fácil","Salada de maionese","Farofa de Natal simples","Salpicão de Natal simples","Salpicão de Natal para ceia","Farofa úmida de Natal","Tabule árabe","Arroz de alho-poró","Salada de grão-de-bico com bacalhau","Purê de batata fácil","Arroz natalino","Caponata de legumes"]]],start:[1,13]}
+];
+
+function openModal(b){
+  let n=0;
+  const m=document.createElement("div"); m.className="modal";
+  m.innerHTML=`<div class="sheet" role="dialog" aria-modal="true">
+    <div class="sheet-head"><img src="${IMG+b.capa}" alt=""><h3>${b.titulo}<small>${b.sec.reduce((t,x)=>t+x[1].length,0)} receitas · ${b.sec.length} capítulos</small></h3><button class="close" aria-label="Fechar">✕</button></div>
+    <div class="sheet-body">${b.sec.map((x,k)=>`<h4>${x[0]}</h4><ol start="${b.start?b.start[k]:1}">${x[1].map(r=>`<li>${r}</li>`).join("")}</ol>`).join("")}</div></div>`;
+  const close=()=>{sfx.click();m.remove();document.body.style.overflow="";};
+  m.querySelector(".close").onclick=close;
+  m.onclick=e=>{if(e.target===m)close();};
+  document.body.style.overflow="hidden";
+  document.body.appendChild(m);
+}
+
+/* ============ RASTREAMENTO (Meta Pixel + Clarity) ============ */
+function track(type,name,params){
+  try{ if(window.fbq) fbq(type,name,params||{}); }catch(e){}
+  try{ if(window.clarity) clarity("event",name); }catch(e){}
+}
+
+/* ============ SOM ============ */
+let ac;
+function audio(){ if(!ac){ try{ac=new (window.AudioContext||window.webkitAudioContext)()}catch(e){} } if(ac&&ac.state==="suspended")ac.resume(); return ac;}
+function tone(freq,dur,type="sine",vol=.18,delay=0){
+  const a=audio(); if(!a) return;
+  const t=a.currentTime+delay, o=a.createOscillator(), g=a.createGain();
+  o.type=type; o.frequency.setValueAtTime(freq,t); o.frequency.exponentialRampToValueAtTime(freq*1.5,t+dur*.6);
+  g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(vol,t+.01); g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g).connect(a.destination); o.start(t); o.stop(t+dur+.02);
+}
+const sfx = {
+  click(){ tone(660,.09,"triangle",.2); if(navigator.vibrate) navigator.vibrate(12); },
+  start(){ tone(523,.12,"triangle",.18); tone(784,.16,"triangle",.18,.08); },
+  done(){ [523,659,784,1047].forEach((f,i)=>tone(f,.22,"triangle",.16,i*.1)); }, // sininho
+  tick(){ tone(1200,.04,"sine",.06); }
+};
+
+/* ============ ESTADO ============ */
+const state={i:-1,answers:{},history:[]};
+const main=document.getElementById("main");
+const back=document.getElementById("back");
+
+function setProgress(){
+  const p=document.getElementById("progress");
+  if(state.i<0||state.i>=Q.length){p.classList.remove("show");return;}
+  p.classList.add("show");
+  const q=Q[state.i];
+  const done=Q.slice(0,state.i).filter(x=>x.type!=="info").length;
+  document.getElementById("phaseName").textContent=PHASES[q.phase];
+  document.getElementById("stepCount").textContent=q.type==="info"?"":Math.min(done+1,TOTAL)+"/"+TOTAL;
+  document.getElementById("barFill").style.width=(done/TOTAL*100+3)+"%";
+}
+
+function go(i,push=true){
+  if(push) state.history.push(state.i);
+  state.i=i; window.scrollTo({top:0,behavior:"smooth"});
+  back.classList.toggle("show",i>=0&&i<Q.length);
+  setProgress();
+  if(i<0) return renderIntro();
+  if(i>=Q.length) return renderLoading();
+  const q=Q[i];
+  if(q.type==="info") return renderInfo();
+  renderQuestion(q);
+}
+
+back.onclick=()=>{ sfx.click(); const prev=state.history.pop(); if(prev!==undefined) go(prev,false); };
+
+/* ============ TELAS ============ */
+function renderIntro(){
+  main.innerHTML=`<section class="screen hero">
+    <span class="tag">🎁 Quiz gratuito · 1 minuto</span>
+    <img class="mock" src="${IMG}mockup-400.ae4a386f.png" alt="Guia Ceia Econômica de Natal">
+    <h1>Descubra como montar uma <em>ceia de Natal completa</em> gastando pouco</h1>
+    <p class="sub">Responda algumas perguntas rápidas e receba um plano de ceia feito para o tamanho da sua família e para o seu bolso.</p>
+    <div class="chips"><span class="chip">🍗 Cardápio</span><span class="chip">🛒 Lista de compras</span><span class="chip">⏰ Cronograma</span></div>
+    <button class="btn red pulse" id="startBtn">Começar o quiz →</button>
+    <p class="fine">Sem cadastro · Resultado na hora</p>
+  </section>`;
+  document.getElementById("startBtn").onclick=()=>{ sfx.start(); track("trackCustom","QuizStart"); go(0); };
+}
+
+function renderQuestion(q){
+  const isGrid=q.type==="grid";
+  const items=q.opts.map((o,k)=> isGrid
+    ? `<button class="card" data-k="${k}">${o.img?`<img src="${(o.local?"img/":IMG)+o.img}" alt="${o.t}" loading="lazy">`:`<div class="ph">${o.e}</div>`}<span>${o.t}</span></button>`
+    : `<button class="opt" data-k="${k}"><span class="emo">${o.e}</span><span class="txt">${o.t}${o.d?`<small>${o.d}</small>`:""}</span></button>`
+  ).join("");
+  main.innerHTML=`<section class="screen">
+    <h2>${q.q}</h2>${q.sub?`<p class="sub">${q.sub}</p>`:`<div style="height:12px"></div>`}
+    <div class="${isGrid?"grid":"opts"}">${items}</div>
+  </section>`;
+  main.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{
+    if(main.dataset.lock) return; main.dataset.lock=1;
+    sfx.click(); b.classList.add("sel");
+    state.answers[q.id]=q.opts[+b.dataset.k].t;
+    setTimeout(()=>{ delete main.dataset.lock; go(state.i+1); },380);
+  });
+}
+
+function renderInfo(){
+  main.innerHTML=`<section class="screen">
+    <span class="tag">📌 Importante</span>
+    <h2>Você não está sozinha nessa</h2>
+    <p class="sub">Pelas suas respostas, o problema não é falta de dinheiro: é falta de <b>planejamento</b>.</p>
+    <div class="info">
+      <p>A maioria das pessoas gasta demais no Natal porque <b>compra sem lista</b>, <b>erra nas quantidades</b> e <b>deixa tudo para a última hora</b>, quando os preços já subiram.</p>
+      <div class="compare">
+        <div class="bad"><strong>❌ Sem plano</strong>Compras por impulso, comida sobrando, correria no dia 24</div>
+        <div class="good"><strong>✅ Com plano</strong>Lista certa, quantidade por pessoa, tudo pronto no horário</div>
+      </div>
+    </div>
+    <button class="btn" id="cont">Quero ver como funciona →</button>
+  </section>`;
+  document.getElementById("cont").onclick=()=>{ sfx.click(); go(state.i+1); };
+}
+
+function renderLoading(){
+  document.getElementById("progress").classList.remove("show");
+  back.classList.remove("show");
+  const steps=["Analisando suas respostas","Calculando quantidades por pessoa","Montando seu cardápio ideal","Gerando sua lista de compras","Organizando o cronograma de preparo"];
+  main.innerHTML=`<section class="screen loading">
+    <h2>Preparando o seu plano…</h2>
+    <p class="sub">Estamos calculando a melhor ceia para o seu perfil.</p>
+    <div class="ring"><svg viewBox="0 0 150 150"><circle class="bg" cx="75" cy="75" r="65"/><circle class="fg" id="fg" cx="75" cy="75" r="65"/></svg><div class="pct" id="pct">0%</div></div>
+    <ul class="steps">${steps.map(s=>`<li><span class="dot"></span>${s}</li>`).join("")}</ul>
+  </section>`;
+  const li=[...main.querySelectorAll(".steps li")], fg=document.getElementById("fg"), pct=document.getElementById("pct");
+  const DUR=6500, t0=performance.now(); let lastStep=-1;
+  (function frame(now){
+    const p=Math.min(1,(now-t0)/DUR), eased=1-Math.pow(1-p,1.6), v=Math.round(eased*100);
+    pct.textContent=v+"%"; fg.style.strokeDashoffset=408-408*eased;
+    const s=Math.min(steps.length-1,Math.floor(eased*steps.length));
+    if(s!==lastStep){ li.forEach((el,k)=>{el.classList.toggle("done",k<s);el.classList.toggle("on",k===s);}); if(lastStep>=0) sfx.tick(); lastStep=s; }
+    if(p<1) requestAnimationFrame(frame);
+    else { li.forEach(el=>{el.classList.remove("on");el.classList.add("done")}); sfx.done(); setTimeout(renderResult,700); }
+  })(t0);
+}
+
+function withUTM(url){ const s=location.search; return s? url+(url.includes("?")?"&":"?")+s.slice(1) : url; }
+
+function renderResult(){
+  track("track","Lead",{content_name:"Quiz Ceia Econômica"});
+  const a=state.answers;
+  const pessoas=(a.pessoas||"sua família").toLowerCase();
+  const prato=(a.prato&&a.prato!=="Outro")?a.prato:"À sua escolha", doce=a.sobremesa||"Pavê";
+  main.innerHTML=`<section class="screen">
+    <div class="result-head">
+      <span class="tag">✅ Plano pronto</span>
+      <h2>Sua Ceia Econômica de Natal está pronta!</h2>
+      <p>Com base nas suas respostas, montamos o caminho para uma ceia farta para <b>${pessoas}</b>, sem estourar o orçamento.</p>
+    </div>
+    <div class="profile">
+      <div><small>Convidados</small><b>${a.pessoas||"-"}</b></div>
+      <div><small>Prato principal</small><b>${prato}</b></div>
+      <div><small>Sobremesa</small><b>${doce}</b></div>
+      <div><small>Objetivo</small><b>Economizar sem perder o sabor</b></div>
+    </div>
+    <div class="plan">
+      <h3>O que vem no seu plano</h3>
+      <ul>
+        <li>37 receitas econômicas com passo a passo</li>
+        <li>Cardápios prontos por orçamento</li>
+        <li>Lista de compras e quantidades por pessoa</li>
+        <li>Substituições econômicas que mantêm o sabor</li>
+        <li>Cronograma de preparo para não ter correria no dia 24</li>
+      </ul>
+    </div>
+    <div class="mockrow">
+      ${["pagina-1.32b79ce1","pagina-2.ef8f390c","pagina-3.0813c4c0","pagina-4.a6476f87","pagina-5.7c819a75"].map(f=>`<img src="${IMG+f}.webp" alt="Página do guia" loading="lazy">`).join("")}
+    </div>
+    <div class="timer">⏰ Promoção termina em <b id="cd">--</b></div>
+
+    <div class="offer best" id="planos">
+      <div class="ribbon">⭐ MAIS ESCOLHIDO</div>
+      <h4>Plano Completo</h4>
+      <p class="desc">A ceia inteira resolvida: do prato principal à sobremesa</p>
+      <ul class="base"><li class="row"><span>E-book <b>Ceia Econômica de Natal</b> (37 receitas)</span><s>R$ 19,90</s></li></ul>
+      ${BONUS.map((b,k)=>`<div class="bonus">
+        <img src="${IMG+b.capa}" alt="${b.titulo}" loading="lazy">
+        <div><span class="btag">Bônus especial de Natal</span><h5>${b.titulo}</h5><p>${b.desc}</p><s>Valor: R$ ${b.valor}</s>
+        <button class="see" data-bonus="${k}">Ver o que tem dentro ›</button></div></div>`).join("")}
+      <ul class="extras">
+        <li class="row"><span>🎁 Calendário de Datas Doces</span><s>R$ 27,00</s></li>
+        <li class="row"><span>🎁 Bolo Retangular</span><s>R$ 67,00</s></li>
+        <li class="row"><span>🎁 30 Receitas de Doces para Festas</span><s>R$ 15,00</s></li>
+        <li class="row"><span>🎁 3 cardápios prontos, checklist de compras e guia de porções</span></li>
+      </ul>
+      <div class="price"><s>De R$ 211,70</s><span class="now">R$ 47,90</span><small>pagamento único</small></div>
+      <a class="btn pulse" href="${withUTM(CHECKOUT_COMPLETO)}" data-snd data-plan="Completo" data-value="47.90">Quero o Plano Completo →</a>
+    </div>
+
+    <div class="offer">
+      <h4>Plano Essencial</h4>
+      <p class="desc">Só o guia principal</p>
+      <ul class="base"><li>Guia Ceia Econômica de Natal (37 receitas)</li></ul>
+      <div class="price"><span class="now" style="font-size:34px">R$ 19,90</span><small>pagamento único</small></div>
+      <a class="btn red" href="${withUTM(CHECKOUT_ESSENCIAL)}" data-snd data-plan="Essencial" data-value="19.90">Quero o Plano Essencial</a>
+    </div>
+
+    <div class="guarantee">
+      <img src="${IMG}selo-garantia-15-dias.a250f264.webp" alt="Garantia de 15 dias">
+      <p><b>Garantia de 15 dias</b>Se não gostar, devolvemos 100% do seu dinheiro, sem perguntas.</p>
+    </div>
+    <p class="fine">Acesso imediato pelo celular, computador ou para imprimir.</p>
+  </section>`;
+  main.querySelectorAll("[data-snd]").forEach(a=>a.addEventListener("click",()=>{ sfx.click(); track("track","InitiateCheckout",{content_name:"Plano "+a.dataset.plan,value:+a.dataset.value,currency:"BRL"}); }));
+  main.querySelectorAll("[data-bonus]").forEach(b=>b.onclick=()=>{sfx.click();openModal(BONUS[+b.dataset.bonus]);});
+  startCountdown();
+}
+
+function startCountdown(){
+  const el=document.getElementById("cd");
+  const tick=()=>{ let ms=PROMO_FIM-new Date(); if(ms<0)ms=0;
+    const d=Math.floor(ms/864e5),h=Math.floor(ms/36e5)%24,m=Math.floor(ms/6e4)%60,s=Math.floor(ms/1e3)%60, z=n=>String(n).padStart(2,"0");
+    el.textContent=(d?d+"d ":"")+z(h)+":"+z(m)+":"+z(s); };
+  tick(); setInterval(tick,1000);
+}
+
+/* ============ NEVE ============ */
+(function(){ const s=document.getElementById("snow");
+  for(let k=0;k<16;k++){ const i=document.createElement("i"); i.textContent=k%3?"❄":"✦";
+    i.style.left=Math.random()*100+"%"; i.style.fontSize=(8+Math.random()*10)+"px";
+    i.style.animationDuration=(9+Math.random()*10)+"s"; i.style.animationDelay=(-Math.random()*15)+"s"; i.style.opacity=.5; s.appendChild(i);} })();
+
+/* pré-carrega imagens do resultado */
+["mockup-400.ae4a386f.png","ce-pernil.3db0c7f7.webp","ce-frango-assado.6ae5452e.webp"].forEach(f=>{const im=new Image();im.src=IMG+f;});
+["bacalhau","chester","pave","rabanada","torta","panetone"].forEach(f=>{const im=new Image();im.src="img/"+f+".webp";});
+
+go(-1,false);
+</script>
+</body>
+</html>
