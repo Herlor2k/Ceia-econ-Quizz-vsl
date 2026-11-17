@@ -219,9 +219,6 @@
   .cta .btn small{display:block;font-size:13px;font-weight:700;opacity:.9}
   .cta .btn{flex-direction:column;gap:2px}
 
-  /* DEV: botão "Ir para o final" (REMOVER antes de publicar) */
-  #devJump{position:fixed;right:12px;bottom:calc(58px + env(safe-area-inset-bottom));z-index:99;border:0;background:#444;color:#fff;font:800 12px 'Nunito';padding:10px 14px;border-radius:99px;opacity:.85;cursor:pointer}
-  #devSkip{position:fixed;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:99;border:0;background:#222;color:#fff;font:800 12px 'Nunito';padding:10px 14px;border-radius:99px;opacity:.85;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.3)}
   footer{text-align:center;font-size:11.5px;color:#a99a8e;padding:18px 0 4px;line-height:1.5}
 
   /* neve */
@@ -600,25 +597,6 @@ function initVSL(){
   };
 }
 
-/* ===== DEV: botão "Ir para o final" — REMOVER ANTES DE PUBLICAR ===== */
-(function(){
-  const b=document.createElement("button"); b.id="devSkip"; b.textContent="⏭ Ir para o final";
-  b.onclick=()=>{
-    Object.assign(state.answers,{idade:"30 a 44 anos",pessoas:"5 a 8 pessoas",prato:"Pernil assado",sobremesa:"Pavê"});
-    state.i=Q.length; document.getElementById("progress").classList.remove("show"); back.classList.remove("show");
-    try{localStorage.removeItem("vsl_cta")}catch(e){}
-    renderResult(); window.scrollTo(0,0);
-    // DEV: segundo botão para pular o vídeo até 1:25 e ver os botões de compra aparecerem
-    if(!document.getElementById("devJump")){
-      const j=document.createElement("button"); j.id="devJump"; j.textContent="⏩ Vídeo em 1:25";
-      j.onclick=()=>{ const v=document.querySelector("#vsl video"); if(!v) return;
-        document.getElementById("vsl").click(); setTimeout(()=>{ v.currentTime=VSL_REVEAL_SEC-5; v.play(); },50); };
-      document.body.appendChild(j);
-    }
-  };
-  document.body.appendChild(b);
-})();
-/* ===== FIM DEV ===== */
 
 go(-1,false);
 </script>
