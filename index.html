@@ -556,11 +556,9 @@ function startCountdown(){
    o clique apenas pausa/continua e a barra é só visual (não dá para arrastar). */
 function initVSL(){
   const box=document.getElementById("vsl"), bar=document.getElementById("vslBar"), cta=document.getElementById("cta");
-  let revealed=false;
-  try{ revealed=localStorage.getItem("vsl_cta")==="1"; }catch(e){}
+  try{ localStorage.removeItem("vsl_cta"); }catch(e){} // limpa a marcação antiga de quem já testou
   const reveal=()=>{ if(cta.classList.contains("show")) return; cta.classList.add("show");
-    try{localStorage.setItem("vsl_cta","1")}catch(e){} track("trackCustom","VSLOferta"); };
-  if(revealed) reveal();
+    track("trackCustom","VSLOferta"); };
   const setBar=(p,sec)=>{ bar.style.width=(p*100).toFixed(2)+"%"; if(sec>=VSL_REVEAL_SEC) reveal(); };
   const overlay=document.createElement("div"); overlay.className="vsl-overlay";
 
